@@ -79,11 +79,11 @@ public class MySource {
         switch(choix) {
             //mcc(menu créer client) save(sauvegarder les infos du nouveau client)
             case "ev_mcc_save":
-                //Elie: info contient les info du nouveau client
+                //info contient les info du nouveau client
                 break;
             //mcoc(menu consulter client) fetch(chercher les infos du client)
             case "ev_mcoc_fetch":
-                //Elie: info contient le ID du client a chercher
+                //info contient le ID du client a chercher
                 break;
                 
             //mp(menu principal) cc(créer client)
