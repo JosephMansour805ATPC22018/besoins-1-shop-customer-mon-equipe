@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import TP1.GEvent;
 import TP1.Source;
+import TP0.Client;
 
 /**
  *
@@ -49,9 +50,9 @@ public class MenuPrincipal implements Runnable {
         System.out.println("0 - Quitter");
         System.out.println("-------------------------");
         System.out.println("1 - Créer");
-        System.out.println("2 - Mise à jour");
-        System.out.println("3 - Supprimer");
-        System.out.println("4 - Consulter");
+        System.out.println("2 - Consulter");
+        System.out.println("3 - Mise à jour");
+        System.out.println("4 - Supprimer");
         System.out.print("Choisir : ");
 
         selection = input.nextInt();
@@ -61,15 +62,18 @@ public class MenuPrincipal implements Runnable {
     @Override
     public void run() {
         int choix;
-        GEvent ev=eventManager.genEvent("Aucune réponse connue");
+        GEvent ev=eventManager.genEvent("ev_rmp");  //aucune réponse connue
         try {
-    while ((choix = menu()) != 0) { 
+ //   while ((choix = menu()) != 0) { 
     choix = menu(); 
                 switch (choix) {
                     case 1:
                         ev = eventManager.genEvent("ev_mp_cc");  //mp(menu principal) cc(créer client)
                         break;
                     case 2:
+                        ev = eventManager.genEvent("ev_mp_coc"); //mp(menu principal) mjc(mise a jour client)
+                        break;
+                    case 3:
                         ev = eventManager.genEvent("ev_mp_mjc"); //mp(menu principal) mjc(mise a jour client)
                         break;
                     case 0:
@@ -79,7 +83,7 @@ public class MenuPrincipal implements Runnable {
                 if (ev != null) {
                     eventManager.dispatch(ev);
                 }
-            }
+      //      }
         } catch (IOException ex) {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
