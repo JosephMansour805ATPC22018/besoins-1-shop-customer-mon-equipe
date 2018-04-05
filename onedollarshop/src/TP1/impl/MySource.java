@@ -16,17 +16,21 @@
  */
 package TP1.impl;
 
-import Data.CreerClient;
 import java.io.IOException;
-import java.util.Scanner;
 import TP1.GEvent;
 import TP1.Source;
 import TP1.boundary.MenuConsulterClient;
 import TP1.boundary.MenuCreerClient;
 import TP1.boundary.MenuMajClient;
 import TP1.boundary.MenuPrincipal;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.script.ScriptEngine.FILENAME;
 
 /**
  *
@@ -76,14 +80,95 @@ public class MySource {
        }
      //  System.out.println("evenement:"+evenement+" info:"+info);
        
-        switch(choix) {
+        switch(evenement) {
             //mcc(menu créer client) save(sauvegarder les infos du nouveau client)
             case "ev_mcc_save":
                 //info contient les info du nouveau client
+                String[] Infos = info.split("\\-");
+                String ID = Infos[0];
+//                String Prenom = Infos[1];
+//                String Nom = Infos[2];
+//                String Telephone = Infos[3];
+//                String Rue = Infos[4];
+//                String Ville = Infos[5];
+//                String Etat = Infos[6];
+//                String Code = Infos[7];
+//                String Pays = Infos[8];
+//                String Email = Infos[9];
+                
+                //Specify the file name and path here
+                File file = new File("D:\\Java\\" + ID + ".txt");
+
+                /* This logic will make sure that the file 
+                 * gets created if it is not present at the
+                 * specified location*/
+                 if (!file.exists()) {
+                    file.createNewFile();
+                 }
+                 else{
+                     System.out.println("ID already found");
+                    break;
+                 }
+                 
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                    
+                        String content = info;
+			bw.write(content);
+			
+			// no need to close it.
+			//bw.close();
+
+			System.out.println("Done");
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
                 break;
             //mcoc(menu consulter client) fetch(chercher les infos du client)
             case "ev_mcoc_fetch":
-                //info contient le ID du client a chercher
+                File f = new File("D:\\Java\\" + info + ".txt");
+                if(f.exists() && !f.isDirectory()) { 
+                    BufferedReader br = null;
+                    FileReader fr = null;
+
+		try {
+			fr = new FileReader(f);
+			br = new BufferedReader(fr);
+
+			String sCurrentLine;
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				System.out.println(sCurrentLine);
+			}
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		} finally {
+
+			try {
+
+				if (br != null)
+					br.close();
+
+				if (fr != null)
+					fr.close();
+
+			} catch (IOException ex) {
+
+				ex.printStackTrace();
+
+			}
+
+		}
+
+                }
+                else{
+                    System.out.println("Id Not found");
+                }
                 break;
                 
             //mp(menu principal) cc(créer client)
