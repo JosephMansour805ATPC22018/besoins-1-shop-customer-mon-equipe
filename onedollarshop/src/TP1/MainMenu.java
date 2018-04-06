@@ -17,6 +17,7 @@
 package TP1;
 
 import TP0.Client;
+import java.io.IOException;
 import java.util.Scanner;
 
 
@@ -26,7 +27,7 @@ import java.util.Scanner;
  */
 public class MainMenu {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException{
 
         //Variables Locales
         Scanner scanner = new Scanner (System.in);
