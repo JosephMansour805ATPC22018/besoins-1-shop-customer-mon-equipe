@@ -1,5 +1,6 @@
 package TP0;
 
+import Data.ClientsHashMap;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -68,6 +69,8 @@ public class Client {
         _nom = "";
     }
 
+    
+
     /**
      * Le constructeur avec un builder
      *
@@ -76,54 +79,56 @@ public class Client {
     @Override
     public String toString() {
 
-        return _status;
-    }
-
-    public void readJsonFile() {
-        File f = new File("Data_Files/" + _id + ".json");
-        if (f.exists() && !f.isDirectory()) {
-            BufferedReader br = null;
-            FileReader fr = null;
-
-            try {
-                fr = new FileReader(f);
-                br = new BufferedReader(fr);
-
-                String sCurrentLine;
-                _status = "";
-                while ((sCurrentLine = br.readLine()) != null) {
-                    _status += sCurrentLine;
-                }
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            } finally {
-
-                try {
-
-                    if (br != null) {
-                        br.close();
-                    }
-
-                    if (fr != null) {
-                        fr.close();
-                    }
-
-                } catch (IOException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            }
-
-        } else {
-            _status = "ID " + _id + " n'existe pas";
-        }
+        //Les infos du Client formattees avec JSON
+        return new Gson().toJson(this);
 
     }
+
+//    public void readJsonFile() {
+//        File f = new File("Data_Files/" + _id + ".json");
+//        if (f.exists() && !f.isDirectory()) {
+//            BufferedReader br = null;
+//            FileReader fr = null;
+//
+//            try {
+//                fr = new FileReader(f);
+//                br = new BufferedReader(fr);
+//
+//                String sCurrentLine;
+//                _status = "";
+//                while ((sCurrentLine = br.readLine()) != null) {
+//                    _status += sCurrentLine;
+//                }
+//
+//            } catch (IOException e) {
+//
+//                e.printStackTrace();
+//
+//            } finally {
+//
+//                try {
+//
+//                    if (br != null) {
+//                        br.close();
+//                    }
+//
+//                    if (fr != null) {
+//                        fr.close();
+//                    }
+//
+//                } catch (IOException ex) {
+//
+//                    ex.printStackTrace();
+//
+//                }
+//
+//            }
+//
+//        } else {
+//            _status = "ID " + _id + " n'existe pas";
+//        }
+//
+//    }
 
     public Client(ClientBuilder cb) {
         _id = cb._id;
@@ -426,32 +431,7 @@ public class Client {
          */
         public Client build() throws IOException {
 
-            Gson gson = new Gson();
-            String json = gson.toJson(this);
-            File file;
-            file = new File("Data_Files/" + this._id + ".json");
-
-            /* This logic will make sure that the file 
-                 * gets created if it is not present at the
-                 * specified location
-             */
-            if (file.exists()) {
-                _status = "ID " + this._id + " déjà existe";
-            } else {
-                file.createNewFile();
-
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-
-                    bw.write(json);
-
-                    _status = "Client crée: " + json;
-
-                } catch (IOException e) {
-                }
-            }
-
             return new Client(this);
-
         }
     }
 }

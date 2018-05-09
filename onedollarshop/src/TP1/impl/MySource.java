@@ -16,6 +16,8 @@
  */
 package TP1.impl;
 
+import TP1.boundary.Parametres;
+import Data.ClientsHashMap;
 import TP0.Client;
 import java.io.IOException;
 import TP1.GEvent;
@@ -42,6 +44,8 @@ public class MySource {
      * @throws java.lang.InterruptedException
      */
     public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("nbfiles:" + Parametres.listf("Data_Files/LIB/BEY").size());
+        //Parametres.listSourceFiles("Data_Files\\LIB\\BEY");
         afficher_menu_principal();
     }
 
@@ -62,6 +66,7 @@ public class MySource {
     }
 
     //Afficher le menu approprié au choix
+    @SuppressWarnings("empty-statement")
     static void Acter_Choix(String choix) throws IOException, InterruptedException {
         Source<String> source = new Source<>();
         String evenement, info = "";
@@ -79,25 +84,33 @@ public class MySource {
             case "ev_mcc_save":
                 //info contient les info du nouveau client
                 int nbf = info.split("\\-", -1).length - 1; //capturer le nombre de -
-           
-                if (nbf < 2) {
-                    System.out.println("Au minimum les colonnes ID, Prenom et Nom doivent etre saisies");
+
+                if (nbf < 1) {
+                    System.out.println("Au minimum le prenom et le nom doivent etre saisies");
                 } else {
                     String[] Infos = info.split("\\-");
-                    String ID = Infos[0];
-                    String Prenom = Infos[1];
-                    String Nom = nbf >= 2 ? Infos[2] : "";
-                    String Telephone = nbf >= 3 ? Infos[3] : "";
-                    String Rue = nbf >= 4 ? Infos[4] : "";
-                    String Ville = nbf >= 5 ? Infos[5] : "";
-                    String Etat = nbf >= 6 ? Infos[6] : "";
-                    String Code = nbf >= 7 ? Infos[7] : "";
-                    String Pays = nbf >= 8 ? Infos[8] : "";
-                    String Mail = nbf >= 9 ? Infos[9] : "";
+                    String Prenom = Infos[0];
+                    String Nom = nbf >= 1 ? Infos[1] : "";
+                    String Telephone = nbf >= 2 ? Infos[2] : "";
+                    String Rue = nbf >= 3 ? Infos[3] : "";
+                    String Ville = nbf >= 4 ? Infos[4] : "BEY";
+                    String Etat = nbf >= 5 ? Infos[5] : "";
+                    String Code = nbf >= 6 ? Infos[6] : "";
+                    String Pays = nbf >= 7 ? Infos[7] : "LIB";
+                    String Mail = nbf >= 8 ? Infos[8] : "";
+                    //Directoire du fichier json
+                    String dirFichier = Parametres.BASE_DIR + Pays.substring(0, 3).toUpperCase() + "/" + Ville.substring(0, 3).toUpperCase() + "/";
+
+                    //générer le ID en basant de fichiers dans la directoires + 1
+                    String nbAuto;
+                    nbAuto = String.format("%05d", Parametres.listf(dirFichier).size() + 1);
+
+                    String ID = Pays.substring(0, 3) + Ville.substring(0, 3) + nbAuto;;
 
                     Client client1;
-                    client1 = new Client.ClientBuilder(ID, Prenom, Nom).ville(Ville).etat(Etat).code(Code).pays(Pays).mail(Mail).build();
-
+                    client1 = new Client.ClientBuilder(ID, Prenom, Nom).rue(Rue).ville(Ville).etat(Etat).code(Code).pays(Pays).mail(Mail).telephone(Telephone).build();
+                    ClientsHashMap chm = new ClientsHashMap();
+                    chm.createClient(client1, dirFichier);
                     //Afficher le resultat de la'operation creer client
                     System.out.println(client1);
 
@@ -107,10 +120,13 @@ public class MySource {
 
             //mcoc(menu consulter client) fetch(chercher les infos du client)
             case "ev_mcoc_fetch":
-                Client client1=new Client(info);
-                client1.readJsonFile();
-                System.out.println(client1);
-                
+                if (info.length()>=6){
+                //lire les infos du HashMap
+                ClientsHashMap chm = new ClientsHashMap();
+
+                System.out.println(chm.findClient(info));}
+                else System.out.println ("ID doit être formé au moins de 11 caractères");
+
                 //retour au menu consulter client
                 Acter_Choix("ev_mp_coc");
 
