@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 mansourjo
+ * Copyright (C) 2018 Lenovo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,9 @@
  */
 package TP1.impl;
 
+import TP1.boundary.GlobalParam;
+import Data.ClientsHashMap;
+import TP0.Client;
 import java.io.IOException;
 import TP1.GEvent;
 import TP1.Source;
@@ -23,154 +26,109 @@ import TP1.boundary.MenuConsulterClient;
 import TP1.boundary.MenuCreerClient;
 import TP1.boundary.MenuMajClient;
 import TP1.boundary.MenuPrincipal;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static javax.script.ScriptEngine.FILENAME;
 
 /**
  *
  * @author pfares
  */
 public class MySource {
-   
-    
-    
 
     /**
-     * @param args 
+     * @param args
      * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
      */
-     
     public static void main(String[] args) throws IOException, InterruptedException {
         afficher_menu_principal();
     }
-     
-    static void afficher_menu_principal()        throws IOException, InterruptedException {
-         Source<String> source = new Source<>();
-         source.addGEventListener((GEvent ev) -> {
+
+    static void afficher_menu_principal() throws IOException, InterruptedException {
+        Source<String> source = new Source<>();
+        source.addGEventListener((GEvent ev) -> {
             try {
                 Acter_Choix(ev.getData().toString());
-            } catch (IOException ex) {
-                Logger.getLogger(MySource.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InterruptedException ex) {
+            } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(MySource.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
 
-           Thread t = new Thread(new MenuPrincipal(source));
+        Thread t = new Thread(new MenuPrincipal(source));
         t.start();
         t.join();
-        
+
     }
-    
+
     //Afficher le menu approprié au choix
-    static void Acter_Choix(String choix) throws IOException, InterruptedException  {
+    @SuppressWarnings("empty-statement")
+    static void Acter_Choix(String choix) throws IOException, InterruptedException {
         Source<String> source = new Source<>();
-       String evenement,info="";
-       int separateur=choix.indexOf("::"); //positionnement de :: entre le nom d'evenment et les infos fournis
-       if (separateur==-1)  evenement=choix;
-       else {
-           evenement=choix.substring(0,separateur);
-           info=choix.substring(separateur+2);
-       }
-     //  System.out.println("evenement:"+evenement+" info:"+info);
-       
-        switch(evenement) {
+        String evenement, info = "";
+        int separateur = choix.indexOf("::"); //positionnement de :: entre le nom d'evenment et les infos fournis
+        if (separateur == -1) {
+            evenement = choix;
+        } else {
+            evenement = choix.substring(0, separateur);
+            info = choix.substring(separateur + 2);
+        }
+        //  System.out.println("evenement:"+evenement+" info:"+info);
+
+        switch (evenement) {
             //mcc(menu créer client) save(sauvegarder les infos du nouveau client)
             case "ev_mcc_save":
                 //info contient les info du nouveau client
-                String[] Infos = info.split("\\-");
-                String ID = Infos[0];
-//                String Prenom = Infos[1];
-//                String Nom = Infos[2];
-//                String Telephone = Infos[3];
-//                String Rue = Infos[4];
-//                String Ville = Infos[5];
-//                String Etat = Infos[6];
-//                String Code = Infos[7];
-//                String Pays = Infos[8];
-//                String Email = Infos[9];
-                
-                //Specify the file name and path here
-                File file = new File("D:\\Java\\" + ID + ".txt");
+                int valid = info.split("\\-", -1).length - 1; //capturer le nombre de -
 
-                /* This logic will make sure that the file 
-                 * gets created if it is not present at the
-                 * specified location*/
-                 if (!file.exists()) {
-                    file.createNewFile();
-                 }
-                 else{
-                     System.out.println("ID already found");
-                    break;
-                 }
-                 
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-                    
-                        String content = info;
-			bw.write(content);
-			
-			// no need to close it.
-			//bw.close();
+                if (valid < 1) {
+                    System.out.println("Please enter your first and last name");
+                    return;
+                } else {
+                    String[] Infos = info.split("\\-");
+                    String Prenom = Infos[0];
+                    String Nom = valid >= 1 ? Infos[1] : "";
+                    String Telephone = valid >= 2 ? Infos[2] : "";
+                    String Rue = valid >= 3 ? Infos[3] : "";
+                    String Ville = valid >= 4 ? Infos[4] : "Bey";
+                    String Etat = valid >= 5 ? Infos[5] : "";
+                    String Code = valid >= 6 ? Infos[6] : "";
+                    String Pays = valid >= 7 ? Infos[7] : "Leb";
+                    String Mail = valid >= 8 ? Infos[8] : "";
+                    //Directoire du fichier json
+                    String dirFichier = GlobalParam.BASE_DIR + "/" + Ville.substring(0, 3).toUpperCase() + "/";
 
-			System.out.println("Done");
+                    //générer le ID en basant de fichiers dans la directoires + 1
+                    String nbAuto;
+                    nbAuto = String.format("%04d", GlobalParam.listf(dirFichier).size() + 1);
 
-		} catch (IOException e) {
+                    String ID = Ville.substring(0, 3) + nbAuto;;
 
-			e.printStackTrace();
+                    Client client1;
+                    client1 = new Client.ClientBuilder(ID, Prenom, Nom).rue(Rue).ville(Ville).etat(Etat).code(Code).pays(Pays).mail(Mail).telephone(Telephone).build();
+                    ClientsHashMap chm = new ClientsHashMap();
+                    chm.createClient(client1, dirFichier);
+                    //Afficher le resultat de la'operation creer client
+                    System.out.println(client1);
 
-		}
-                break;
+                }
+                //retour au menu créer client
+                Acter_Choix("ev_mp_cc");
+
             //mcoc(menu consulter client) fetch(chercher les infos du client)
             case "ev_mcoc_fetch":
-                File f = new File("D:\\Java\\" + info + ".txt");
-                if(f.exists() && !f.isDirectory()) { 
-                    BufferedReader br = null;
-                    FileReader fr = null;
+                if (info.length()>=6){
+                //lire les infos du HashMap
+                ClientsHashMap chm = new ClientsHashMap();
 
-		try {
-			fr = new FileReader(f);
-			br = new BufferedReader(fr);
+                System.out.println(chm.findClient(info));}
+                else System.out.println ("Error");
 
-			String sCurrentLine;
+                //retour au menu consulter client
+                Acter_Choix("ev_mp_coc");
 
-			while ((sCurrentLine = br.readLine()) != null) {
-				System.out.println(sCurrentLine);
-			}
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		} finally {
-
-			try {
-
-				if (br != null)
-					br.close();
-
-				if (fr != null)
-					fr.close();
-
-			} catch (IOException ex) {
-
-				ex.printStackTrace();
-
-			}
-
-		}
-
-                }
-                else{
-                    System.out.println("Id Not found");
-                }
-                break;
-                
             //mp(menu principal) cc(créer client)
             case "ev_mp_cc":
                 source.addGEventListener((GEvent ev) -> {
@@ -184,7 +142,7 @@ public class MySource {
                 tc.start();
                 tc.join();
                 break;
-        
+
             //mp(menu principal) mjc(mettre à jour client)
             case "ev_mp_mjc":
                 source.addGEventListener((GEvent ev) -> {
@@ -198,7 +156,7 @@ public class MySource {
                 tm.start();
                 tm.join();
                 break;
-        
+
             //mp(menu principal) coc(consulter client)    
             case "ev_mp_coc":
                 source.addGEventListener((GEvent ev) -> {
@@ -212,16 +170,15 @@ public class MySource {
                 tco.start();
                 tco.join();
                 break;
-                
+
             //sortie du système    
             case "ev_ss":
-                System.exit(0); 
+                System.exit(0);
 
             //retour au menu principal
-            default:afficher_menu_principal();
+            default:
+                afficher_menu_principal();
         }
     }
-        
-    
-    
+
 }

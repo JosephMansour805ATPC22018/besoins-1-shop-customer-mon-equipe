@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 mansourjo
+ * Copyright (C) 2018 Lenovo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public class MenuCreerClient implements Runnable {
          * ************************************************
          */
         System.out.println("---Créer un Client--(0 pour revenir au menu principla) --------------------");
-        System.out.println("Usage: ID-Prenom-Nom-Telephone-Rue-Ville-Etat-Code-Pays-Mail");
+        System.out.println("Usage: Prenom-Nom-Telephone-Rue-Ville-Etat-Code-Pays-Mail");
         System.out.print("Saisir les info: ");
         selection = input.nextLine();
         return selection;

@@ -1,7 +1,7 @@
 package TP1.impl;
 
 /*
- * Copyright (C) 2018 mansourjo
+ * Copyright (C) 2018 Lenovo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

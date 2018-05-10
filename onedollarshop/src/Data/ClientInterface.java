@@ -14,24 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package TP1.impl;
+package Data;
 
-import TP1.GEvent;
-import TP1.GEventListener;
-import TP1.Source;
+import TP0.Client;
 
 /**
  *
- * @author pfares
+ * @author Lenovo
  */
-public class MyEventListener implements GEventListener{
+public interface ClientInterface {
 
-    @Override
-    public void action(GEvent ev) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-       // System.out.println("here action");
-    }
+    public void createClient(Client c, String dir);
 
-    
-    
+    public Client findClient(String id);
+
+    public void removeClient(String id);
+
+    public void updateClient(String id);
+
+    //public HashMap<String,Client> getAllClients(); 
 }
