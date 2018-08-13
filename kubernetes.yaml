@@ -78,6 +78,7 @@ spec:
   - host: my.whoami.example
     http:
       paths:
-      - backend:
+      - path: /w
+        backend:
           serviceName: whoami-svc
           servicePort: 80
