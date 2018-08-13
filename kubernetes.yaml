@@ -27,7 +27,7 @@ spec:
   selector:
     app: whoami
 ---
-apiVersion: v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nginx-ingress-rc
