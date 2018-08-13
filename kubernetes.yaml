@@ -56,11 +56,12 @@ metadata:
   labels:
     app: nginx-ingress
 spec:
-  type: NodePort
+  externalIPs:
+  - 35.201.124.219
   ports:
   - port: 80
     name: http
-    nodePort: 30001
+    targetPort: 80
   selector:
     app: nginx-ingress
 ---
