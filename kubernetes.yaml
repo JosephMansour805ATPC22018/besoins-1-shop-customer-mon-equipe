@@ -32,18 +32,18 @@ kind: Deployment
 metadata:
   name: nginx-ingress-rc
   labels:
-    k8s-app: nginx-ingress
+    app: nginx-ingress
 spec:
   replicas: 1
   selector:
-    k8s-app: nginx-ingress
+    app: nginx-ingress
   template:
     metadata:
       labels:
-        k8s-app: nginx-ingress
+        app: nginx-ingress
     spec:
       containers:
-      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.18.0
+      - image: nginxdemos/nginx-ingress:0.9.0
         name: nginx-ingress
         ports:
         - containerPort: 80
