@@ -12,7 +12,7 @@ metadata:
     app: default-http-backend
   namespace: ingress-nginx
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: default-http-backend
@@ -27,7 +27,7 @@ spec:
         # Any image is permissible as long as:
         # 1. It serves a 404 page at /
         # 2. It serves 200 on a /healthz endpoint
-        image: gcr.io/google_containers/defaultbackend:1.4
+        image: emilevauge/whoami
         livenessProbe:
           httpGet:
             path: /healthz
